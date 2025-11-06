@@ -103,6 +103,7 @@
       font-size: 1.3em;
       font-weight: bold;
       color: #fff;
+      user-select:none;
     }
     .chat-messages {
       flex: 1;
@@ -176,6 +177,8 @@
       word-break: break-word;
       position: relative;
       cursor: pointer;
+      user-select: text;
+      white-space: pre-wrap;
     }
     .message.self .content {
       background: #5865f2;
