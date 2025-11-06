@@ -6,262 +6,133 @@
   <title>Chat Estilo Discord Completo</title>
   <style>
     html, body {
-      height: 100vh;
-      margin: 0;
-      padding: 0;
+      height: 100vh; margin: 0; padding: 0;
       font-family: 'Roboto', Arial, sans-serif;
       background: #181823;
       color: #dcdde1;
       overflow: hidden;
     }
-    body {
-      display: flex;
-      height: 100dvh;
-      min-height: 100vh;
-    }
+    body { display: flex; height: 100dvh; min-height: 100vh; }
     .sidebar {
-      width: 250px;
-      background: #2f3136;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid #202225;
-      height: 100vh;
+      width: 250px; background: #2f3136; display: flex; flex-direction: column;
+      border-right: 1px solid #202225; height: 100vh;
     }
     .sidebar-header {
-      color: #7289da;
-      font-size: 1.5em;
-      font-weight: 700;
-      margin: 20px 20px 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      color: #7289da; font-size: 1.5em; font-weight: 700; margin: 20px 20px 6px;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .btn-group {
-      display: flex;
-      gap: 8px;
-    }
+    .btn-group { display: flex; gap: 8px; }
     .sidebar button {
-      background: #7289da;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.1em;
-      padding: 4px 10px;
-      cursor: pointer;
+      background: #7289da; border: none; border-radius: 5px; color: #fff;
+      font-weight: 600; font-size: 1.1em; padding: 4px 10px; cursor: pointer;
       transition: background 0.3s;
     }
-    .sidebar button:hover {
-      background: #5865f2;
-    }
+    .sidebar button:hover { background: #5865f2; }
     .channels {
-      flex: 1;
-      overflow-y: auto;
-      margin: 0 10px 15px;
-      padding-right: 4px;
+      flex: 1; overflow-y: auto; margin: 0 10px 15px; padding-right: 4px;
     }
     .channel {
-      border-radius: 6px;
-      padding: 10px;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: #b9bbbe;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.17s;
+      border-radius: 6px; padding: 10px; margin-bottom: 6px; font-weight: 500;
+      color: #b9bbbe; cursor: pointer; user-select: none; transition: background 0.17s;
     }
-    .channel.active,
-    .channel:hover {
-      background: #40444b;
-      color: #fff;
+    .channel.active, .channel:hover {
+      background: #40444b; color: #fff;
     }
     .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: #36393f;
+      flex: 1; display: flex; flex-direction: column; height: 100vh; background: #36393f;
       min-width: 0;
     }
     .chat-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 28px;
-      background: #2f3136;
-      border-bottom: 1px solid #202225;
+      display: flex; align-items: center; gap: 12px; padding: 18px 28px;
+      background: #2f3136; border-bottom: 1px solid #202225;
     }
     .group-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid #7289da;
-      object-fit: cover;
-      cursor: pointer;
+      width: 48px; height: 48px; border-radius: 50%; border: 2px solid #7289da;
+      object-fit: cover; cursor: pointer;
     }
     .chat-header span {
-      font-size: 1.3em;
-      font-weight: bold;
-      color: #fff;
-      user-select:none;
+      font-size: 1.3em; font-weight: bold; color: #fff; user-select:none;
+    }
+    .link-container, .paste-container {
+      background:#2f3136; padding:10px 28px; color:#7289da;
+      display:flex; gap:10px; align-items:center; font-size:0.9em; user-select:all;
+    }
+    .link-container input, .paste-container input {
+      flex:1; background:#36393f; border:none; color:#fff;
+      padding:6px 10px; border-radius:4px;
+    }
+    .link-container button, .paste-container button {
+      background:#5865f2; border:none; border-radius:4px; color:#fff;
+      padding:6px 12px; cursor:pointer;
     }
     .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 40px 20px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      background: #36393f;
+      flex: 1; overflow-y: auto; padding: 20px 40px 20px 40px;
+      display: flex; flex-direction: column; gap: 18px; background: #36393f;
       min-height: 0;
     }
-    .message {
-      display: flex;
-      align-items: flex-start;
-    }
-    .message.self {
-      flex-direction: row-reverse;
-    }
+    .message { display: flex; align-items: flex-start; }
+    .message.self { flex-direction: row-reverse; }
     .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 2px solid #7289da;
-      object-fit: cover;
-      margin-right: 10px;
-      margin-left: 10px;
-      flex-shrink: 0;
+      width: 40px; height: 40px; border-radius: 50%; border: 2px solid #7289da;
+      object-fit: cover; margin-right: 10px; margin-left: 10px; flex-shrink: 0;
     }
-    .message.self .avatar {
-      margin-left: 10px;
-      margin-right: 0;
-    }
-    .content-wrapper {
-      max-width: 60vw;
-      min-width: 50px;
-    }
+    .message.self .avatar { margin-left: 10px; margin-right: 0; }
+    .content-wrapper { max-width: 60vw; min-width: 50px; }
     .username-timestamp {
-      font-size: 12px;
-      color: #757575;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
+      font-size: 12px; color: #757575; margin-bottom: 4px;
+      display: flex; align-items: baseline; gap: 8px;
     }
-    .username {
-      font-weight: 700;
-      color: #7289da;
-    }
-    .message.self .username {
-      color: #fff;
-    }
-    .timestamp {
-      font-size: 11px;
-      color: #bbb;
-    }
+    .username { font-weight: 700; color: #7289da; }
+    .message.self .username { color: #fff; }
+    .timestamp { font-size: 11px; color: #bbb; }
     .edited-indicator {
-      margin-left: 6px;
-      font-size: 10px;
-      font-style: italic;
-      color: #aaa;
+      margin-left: 6px; font-size: 10px; font-style: italic; color: #aaa;
     }
     .content {
-      background: #40444b;
-      color: #dcdde1;
-      border-radius: 10px;
-      padding: 11px 17px;
-      font-size: 15px;
-      min-width: 32px;
-      min-height: 20px;
-      line-break: auto;
-      word-break: break-word;
-      position: relative;
-      cursor: pointer;
-      user-select: text;
-      white-space: pre-wrap;
+      background: #40444b; color: #dcdde1; border-radius: 10px;
+      padding: 11px 17px; font-size: 15px; min-width: 32px; min-height: 20px;
+      line-break: auto; word-break: break-word; position: relative; cursor: pointer;
+      user-select: text; white-space: pre-wrap;
     }
     .message.self .content {
-      background: #5865f2;
-      color: #fff;
-      text-align: right;
+      background: #5865f2; color: #fff; text-align: right;
     }
     .content.editing {
-      outline: 2px solid #7289da;
-      background: #23272a;
-      color: #fff;
-      min-height: 34px;
+      outline: 2px solid #7289da; background: #23272a; color: #fff; min-height: 34px;
     }
     .content a { color: #00aff4; word-break: break-all; }
     .message img.message-img {
-      margin-top: 7px;
-      max-width: 220px;
-      max-height: 150px;
-      border-radius: 6px;
-      object-fit: cover;
-      border: 1px solid #555;
-      cursor: pointer;
+      margin-top: 7px; max-width: 220px; max-height: 150px; border-radius: 6px;
+      object-fit: cover; border: 1px solid #555; cursor: pointer;
     }
     .actions {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      display: flex;
-      gap: 8px;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 2;
-      transition: opacity 0.2s;
+      position: absolute; top: 8px; right: 10px; display: flex; gap: 8px;
+      opacity: 0; pointer-events: none; z-index: 2; transition: opacity 0.2s;
     }
     .message:hover .actions { opacity: 1; pointer-events: auto; }
     .action-btn {
-      background: transparent;
-      border: none;
-      color: #b9bbbe;
-      font-size: 15px;
-      cursor: pointer;
-      padding: 2px 5px;
-      border-radius: 4px;
+      background: transparent; border: none; color: #b9bbbe;
+      font-size: 15px; cursor: pointer; padding: 2px 5px; border-radius: 4px;
       transition: background 0.2s, color 0.2s;
     }
     .action-btn:hover { background: #5865f2; color: #fff; }
     .chat-input {
-      display: flex;
-      gap: 10px;
-      padding: 17px 34px;
-      background: #40444b;
-      align-items: center;
-      border-top: 1px solid #2f3136;
+      display: flex; gap: 10px; padding: 17px 34px; background: #40444b;
+      align-items: center; border-top: 1px solid #2f3136;
     }
     .chat-input input[type='text'] {
-      flex: 1;
-      height: 45px;
-      padding: 0 15px;
-      border-radius: 5px;
-      background: #2f3136;
-      border: none;
-      font-size: 15px;
-      color: #fff;
-      outline: none;
+      flex: 1; height: 45px; padding: 0 15px; border-radius: 5px; background: #2f3136; border: none;
+      font-size: 15px; color: #fff; outline: none;
     }
     .chat-input label {
-      cursor: pointer;
-      font-size: 23px;
-      color: #7289da;
-      padding: 4px 8px;
-      user-select: none;
-      border-radius: 6px;
+      cursor: pointer; font-size: 23px; color: #7289da;
+      padding: 4px 8px; user-select: none; border-radius: 6px;
       transition: background 0.3s;
     }
     .chat-input label:hover { background: #5865f2; }
     .chat-input button {
-      background: #5865f2;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      font-weight: 700;
-      font-size: 17px;
-      padding: 10px 22px;
-      cursor: pointer;
+      background: #5865f2; border: none; border-radius: 6px; color: #fff;
+      font-weight: 700; font-size: 17px; padding: 10px 22px; cursor: pointer;
       transition: background 0.3s;
     }
     .chat-input button:hover { background: #7289da; }
@@ -287,6 +158,17 @@
       <input type="file" id="group-avatar-input" style="display:none" accept="image/*" />
       <span id="chat-header-text"># geral</span>
     </div>
+    <!-- Área para colar link do canal de amigo -->
+    <div class="paste-container">
+      <input id="paste-link-input" type="text" placeholder="Cole aqui o link do canal do amigo" />
+      <button onclick="pasteChannelLink()">Entrar no canal</button>
+    </div>
+    <!-- Área para mostrar link do canal atual para copiar -->
+    <div class="link-container">
+      <div>Link do canal atual:</div>
+      <input type="text" id="current-link" readonly />
+      <button onclick="copyCurrentLink()">Copiar</button>
+    </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input">
       <input type="text" id="chat-input" placeholder="Digite uma mensagem..." onkeydown="handleKeyDown(event)" autofocus />
@@ -305,12 +187,13 @@ const groupAvatar = document.getElementById('group-avatar');
 const groupAvatarInput = document.getElementById('group-avatar-input');
 const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
+const currentLinkInput = document.getElementById('current-link');
+const pasteLinkInput = document.getElementById('paste-link-input');
 
 let currentChannel = 'geral';
 const groupsAvatar = { 'geral': 'https://placehold.co/48x48' };
 const channels = { 'geral': [] };
 
-// Abrir input ao clicar na imagem
 groupAvatar.onclick = () => groupAvatarInput.click();
 groupAvatarInput.onchange = function(event) {
   const file = event.target.files[0];
@@ -364,7 +247,6 @@ function createMessageElement(msg, index) {
     content.appendChild(img);
   }
 
-  // Editar e apagar para o usuário
   if(msg.user === username) {
     const actions = document.createElement('div');
     actions.className = 'actions';
@@ -478,6 +360,7 @@ function selectChannel(channel) {
   chatHeaderText.textContent = '# ' + channel;
   groupAvatar.src = groupsAvatar[channel] || 'https://placehold.co/48x48';
   renderMessages(channel);
+  updateCurrentLink();
 }
 
 function createChannel() {
@@ -503,6 +386,45 @@ function shareLink() {
   }).catch(() => {
     alert('Copie manualmente:\n' + url);
   });
+}
+
+function updateCurrentLink() {
+  const baseUrl = window.location.href.split('?')[0];
+  const link = `${baseUrl}?channel=${encodeURIComponent(currentChannel)}`;
+  currentLinkInput.value = link;
+}
+
+function copyCurrentLink() {
+  currentLinkInput.select();
+  currentLinkInput.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(currentLinkInput.value).then(() => {
+    alert('Link copiado!');
+  }, () => {
+    alert('Falha ao copiar o link!');
+  });
+}
+
+function pasteChannelLink() {
+  const url = pasteLinkInput.value.trim();
+
+  if (!url) {
+    alert('Por favor, cole um link válido.');
+    return;
+  }
+
+  try {
+    const channelUrl = new URL(url);
+    const channelParam = channelUrl.searchParams.get('channel');
+
+    if (channelParam && channels[channelParam]) {
+      selectChannel(channelParam);
+      pasteLinkInput.value = '';
+    } else {
+      alert('Canal inválido ou não existe.');
+    }
+  } catch (error) {
+    alert('Link inválido. Certifique-se de colar a URL correta do canal.');
+  }
 }
 
 // Enter envia, Shift+Enter nova linha
