@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - Discord Style Chat</title>
+  <style>
+    body {
+      background: #181823;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+    }
+    .login-box {
+      background: #22203a;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px #0006;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .login-box input[type="text"] {
+      background: #181823;
+      border: 1px solid #7c41e6;
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      width: 200px;
+      margin-bottom: 10px;
+    }
+    .login-box input[type="file"] {
+      color: #fff;
+      background: none;
+      border: none;
+    }
+    .login-box button {
+      background: linear-gradient(90deg, #7c41e6, #c552dd);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .preview-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      object-fit: cover;
+      border: 2px solid #7c41e6;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Entrar no Chat</h2>
+    <img id="preview" class="preview-img" src="https://placehold.co/60x60" alt="Preview">
+    <input type="file" id="avatar" accept="image/*" required onchange="previewImage(event)">
+    <input type="text" id="username" placeholder="Seu nome" required>
+    <button onclick="login()">Entrar</button>
+  </div>
+  <script>
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('preview').src = e.target.result;
+      }
+      if(file) reader.readAsDataURL(file);
+    }
+
+    function login() {
+      const username = document.getElementById('username').value;
+      const avatar = document.getElementById('avatar').files[0];
+      if (!username || !avatar) {
+        alert('Preencha tudo!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        localStorage.setItem('chat-username', username);
+        localStorage.setItem('chat-avatar', e.target.result);
+        window.location.href = 'bate-papo.html';
+      };
+      reader.readAsDataURL(avatar);
+    }
+  </script>
+</body>
+</html>
