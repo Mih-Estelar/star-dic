@@ -70,7 +70,7 @@
       display: flex; flex-direction: column; gap: 18px; background: #36393f;
       min-height: 0;
     }
-    .message { display: flex; align-items: flex-start; }
+    .message { display: flex; align-items: flex-start; position: relative; }
     .message.self { flex-direction: row-reverse; }
     .avatar {
       width: 40px; height: 40px; border-radius: 50%; border: 2px solid #7289da;
@@ -91,8 +91,9 @@
     .content {
       background: #40444b; color: #dcdde1; border-radius: 10px;
       padding: 11px 17px; font-size: 15px; min-width: 32px; min-height: 20px;
-      line-break: auto; word-break: break-word; position: relative; cursor: pointer;
+      line-break: auto; word-break: break-word; cursor: pointer;
       user-select: text; white-space: pre-wrap;
+      position: relative;
     }
     .message.self .content {
       background: #5865f2; color: #fff; text-align: right;
@@ -158,12 +159,10 @@
       <input type="file" id="group-avatar-input" style="display:none" accept="image/*" />
       <span id="chat-header-text"># geral</span>
     </div>
-    <!-- Área para colar link do canal de amigo -->
     <div class="paste-container">
       <input id="paste-link-input" type="text" placeholder="Cole aqui o link do canal do amigo" />
       <button onclick="pasteChannelLink()">Entrar no canal</button>
     </div>
-    <!-- Área para mostrar link do canal atual para copiar -->
     <div class="link-container">
       <div>Link do canal atual:</div>
       <input type="text" id="current-link" readonly />
@@ -224,11 +223,14 @@ function createMessageElement(msg, index) {
   uname.textContent = msg.user;
   const time = document.createElement('span');
   time.className = 'timestamp';
-  time.textContent = new Date(msg.timestamp).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  time.textContent = new Date(msg.timestamp).toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
   userTs.appendChild(uname);
   userTs.appendChild(time);
 
-  if(msg.edited) {
+  if (msg.edited) {
     const edit = document.createElement('span');
     edit.className = 'edited-indicator';
     edit.textContent = '(editado)';
@@ -247,7 +249,7 @@ function createMessageElement(msg, index) {
     content.appendChild(img);
   }
 
-  if(msg.user === username) {
+  if (msg.user === username) {
     const actions = document.createElement('div');
     actions.className = 'actions';
 
@@ -255,8 +257,9 @@ function createMessageElement(msg, index) {
     editBtn.className = 'action-btn';
     editBtn.title = 'Editar';
     editBtn.innerHTML = '✏️';
-    editBtn.onclick = (e) => {
-      e.preventDefault(); e.stopPropagation();
+    editBtn.onclick = e => {
+      e.preventDefault();
+      e.stopPropagation();
       startEditingMessage(content, index);
     };
 
@@ -264,7 +267,10 @@ function createMessageElement(msg, index) {
     delBtn.className = 'action-btn';
     delBtn.title = 'Apagar';
     delBtn.innerHTML = '🗑️';
-    delBtn.onclick = (e) => { e.preventDefault(); deleteMessage(index); };
+    delBtn.onclick = e => {
+      e.preventDefault();
+      deleteMessage(index);
+    };
 
     actions.appendChild(editBtn);
     actions.appendChild(delBtn);
@@ -274,7 +280,7 @@ function createMessageElement(msg, index) {
   wrapper.appendChild(userTs);
   wrapper.appendChild(content);
 
-  if(msg.user === username) {
+  if (msg.user === username) {
     div.appendChild(wrapper);
     div.appendChild(avatarImg);
   } else {
@@ -293,14 +299,21 @@ function renderMessages(channel) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function addMessage(channel, user, avatarUrl, text, type='text', edited=false) {
-  channels[channel].push({ user, avatarUrl, text, type, edited, timestamp: Date.now() });
-  if(channel === currentChannel) renderMessages(channel);
+function addMessage(channel, user, avatarUrl, text, type = 'text', edited = false) {
+  channels[channel].push({
+    user,
+    avatarUrl,
+    text,
+    type,
+    edited,
+    timestamp: Date.now()
+  });
+  if (channel === currentChannel) renderMessages(channel);
 }
 
 function sendMessage() {
   const text = chatInput.value.trim();
-  if(text === '') return;
+  if (text === '') return;
   addMessage(currentChannel, username, avatar, text, 'text');
   chatInput.value = '';
   chatInput.focus();
@@ -310,7 +323,7 @@ function sendImage(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     addMessage(currentChannel, username, avatar, e.target.result, 'image');
     event.target.value = '';
   };
@@ -324,7 +337,7 @@ function deleteMessage(idx) {
 }
 
 function startEditingMessage(contentDiv, index) {
-  if(contentDiv.isContentEditable) return;
+  if (contentDiv.isContentEditable) return;
   contentDiv.contentEditable = true;
   contentDiv.classList.add('editing');
   contentDiv.focus();
@@ -332,7 +345,7 @@ function startEditingMessage(contentDiv, index) {
     contentDiv.contentEditable = false;
     contentDiv.classList.remove('editing');
     const newText = contentDiv.textContent.trim();
-    if(newText && newText !== channels[currentChannel][index].text) {
+    if (newText && newText !== channels[currentChannel][index].text) {
       channels[currentChannel][index].text = newText;
       channels[currentChannel][index].edited = true;
       renderMessages(currentChannel);
@@ -342,8 +355,8 @@ function startEditingMessage(contentDiv, index) {
     contentDiv.removeEventListener('blur', finishEdit);
     contentDiv.removeEventListener('keydown', finishEditKey);
   };
-  const finishEditKey = (e) => {
-    if(e.key === 'Enter' && !e.shiftKey) {
+  const finishEditKey = e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       finishEdit();
     }
@@ -365,8 +378,8 @@ function selectChannel(channel) {
 
 function createChannel() {
   let newChannel = prompt('Nome do novo canal:');
-  if(!newChannel) return;
-  newChannel = newChannel.trim().toLowerCase().replace(/\s+/g,'-');
+  if (!newChannel) return;
+  newChannel = newChannel.trim().toLowerCase().replace(/\s+/g, '-');
   if (newChannel && !channels[newChannel]) {
     channels[newChannel] = [];
     groupsAvatar[newChannel] = 'https://placehold.co/48x48';
@@ -427,18 +440,16 @@ function pasteChannelLink() {
   }
 }
 
-// Enter envia, Shift+Enter nova linha
 function handleKeyDown(event) {
-  if(event.key === 'Enter' && !event.shiftKey) {
+  if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
     sendMessage();
   }
 }
 
-// Inicializa canal a partir da URL
 const params = new URLSearchParams(window.location.search);
 const channelParam = params.get('channel');
-if(channelParam && channels[channelParam]){
+if (channelParam && channels[channelParam]) {
   selectChannel(channelParam);
 } else {
   selectChannel('geral');
@@ -446,3 +457,4 @@ if(channelParam && channels[channelParam]){
 </script>
 </body>
 </html>
+

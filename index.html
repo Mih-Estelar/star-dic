@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login - Discord Style Chat</title>
   <style>
     body {
@@ -76,9 +78,9 @@
     }
 
     function login() {
-      const username = document.getElementById('username').value;
-      const avatar = document.getElementById('avatar').files[0];
-      if (!username || !avatar) {
+      const username = document.getElementById('username').value.trim();
+      const avatarFile = document.getElementById('avatar').files[0];
+      if (!username || !avatarFile) {
         alert('Preencha tudo!');
         return;
       }
@@ -88,7 +90,7 @@
         localStorage.setItem('chat-avatar', e.target.result);
         window.location.href = 'bate-papo.html';
       };
-      reader.readAsDataURL(avatar);
+      reader.readAsDataURL(avatarFile);
     }
   </script>
 </body>
