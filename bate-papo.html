@@ -3,90 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat Estilo Discord Aperfeiçoado</title>
+  <title>Chat Estilo Discord Completo</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-    * {
-      box-sizing: border-box;
-    }
-    body, html {
-      margin: 0; padding: 0; height: 100%;
-      background: #181823;
-      font-family: 'Roboto', sans-serif;
-      color: #dcdde1;
-      display: flex;
+    html, body {
       height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      background: #181823;
+      color: #dcdde1;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      height: 100dvh;
+      min-height: 100vh;
     }
     .sidebar {
-      width: 260px;
-      background-color: #2f3136;
+      width: 250px;
+      background: #2f3136;
       display: flex;
       flex-direction: column;
       border-right: 1px solid #202225;
-      padding: 10px;
+      height: 100vh;
     }
     .sidebar-header {
-      font-size: 1.5em;
       color: #7289da;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 1.5em;
+      font-weight: 700;
+      margin: 20px 20px 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    .channels {
-      flex-grow: 1;
-      overflow-y: auto;
-      margin-bottom: 10px;
-    }
-    .channel {
-      border-radius: 5px;
-      padding: 8px 12px;
-      font-weight: 500;
-      color: #b9bbbe;
-      cursor: pointer;
-      margin-bottom: 6px;
-      user-select: none;
-      transition: background-color 0.15s ease;
-    }
-    .channel:hover, .channel.active {
-      background-color: #40444b;
-      color: white;
     }
     .btn-group {
       display: flex;
       gap: 8px;
     }
-    button {
-      user-select: none;
-      cursor: pointer;
+    .sidebar button {
+      background: #7289da;
       border: none;
-      border-radius: 4px;
-      padding: 6px 12px;
-      font-weight: 700;
-      font-size: 1em;
-      color: white;
-      background-color: #7289da;
-      transition: background-color 0.3s ease;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1em;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: background 0.3s;
     }
-    button:hover {
-      background-color: #5b6eae;
+    .sidebar button:hover {
+      background: #5865f2;
+    }
+    .channels {
+      flex: 1;
+      overflow-y: auto;
+      margin: 0 10px 15px;
+      padding-right: 4px;
+    }
+    .channel {
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #b9bbbe;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.17s;
+    }
+    .channel.active,
+    .channel:hover {
+      background: #40444b;
+      color: #fff;
     }
     .main {
-      flex-grow: 1;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      height: 100vh;
       background: #36393f;
+      min-width: 0;
     }
     .chat-header {
-      padding: 20px 24px;
-      background-color: #2f3136;
-      color: white;
-      font-size: 1.3rem;
-      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
+      padding: 18px 28px;
+      background: #2f3136;
       border-bottom: 1px solid #202225;
     }
     .group-avatar {
@@ -97,156 +99,170 @@
       object-fit: cover;
       cursor: pointer;
     }
+    .chat-header span {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #fff;
+    }
     .chat-messages {
-      flex-grow: 1;
+      flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 20px 40px 20px 40px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      scroll-behavior: smooth;
+      gap: 18px;
+      background: #36393f;
+      min-height: 0;
     }
     .message {
       display: flex;
+      align-items: flex-start;
     }
     .message.self {
-      justify-content: flex-end;
+      flex-direction: row-reverse;
     }
-    .message .content-wrapper {
-      display: flex;
-      flex-direction: column;
-      max-width: 65%;
-      position: relative;
-    }
-    .message .avatar {
+    .avatar {
       width: 40px;
       height: 40px;
       border-radius: 50%;
       border: 2px solid #7289da;
       object-fit: cover;
+      margin-right: 10px;
+      margin-left: 10px;
       flex-shrink: 0;
     }
     .message.self .avatar {
-      order: 2;
-      margin-left: 12px;
+      margin-left: 10px;
+      margin-right: 0;
     }
-    .message .content {
-      background: #40444b;
-      color: #dcddde;
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-size: 14px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      cursor: pointer;
-      user-select: text;
-      position: relative;
+    .content-wrapper {
+      max-width: 60vw;
+      min-width: 50px;
     }
-    .message.self .content {
-      background: #7289da;
-      color: #fff;
-    }
-    .message .username-timestamp {
-      display: flex;
-      justify-content: space-between;
+    .username-timestamp {
       font-size: 12px;
-      margin-bottom: 3px;
-      color: #999;
+      color: #757575;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
     }
-    .message .username-timestamp .username {
+    .username {
       font-weight: 700;
       color: #7289da;
     }
-    .message .username-timestamp .timestamp {
-      font-weight: 400;
+    .message.self .username {
+      color: #fff;
     }
-    .message .edited-indicator {
-      font-size: 10px;
-      color: #aaa;
+    .timestamp {
+      font-size: 11px;
+      color: #bbb;
+    }
+    .edited-indicator {
       margin-left: 6px;
+      font-size: 10px;
       font-style: italic;
+      color: #aaa;
     }
+    .content {
+      background: #40444b;
+      color: #dcdde1;
+      border-radius: 10px;
+      padding: 11px 17px;
+      font-size: 15px;
+      min-width: 32px;
+      min-height: 20px;
+      line-break: auto;
+      word-break: break-word;
+      position: relative;
+      cursor: pointer;
+    }
+    .message.self .content {
+      background: #5865f2;
+      color: #fff;
+      text-align: right;
+    }
+    .content.editing {
+      outline: 2px solid #7289da;
+      background: #23272a;
+      color: #fff;
+      min-height: 34px;
+    }
+    .content a { color: #00aff4; word-break: break-all; }
     .message img.message-img {
-      margin-top: 8px;
+      margin-top: 7px;
       max-width: 220px;
       max-height: 150px;
-      border-radius: 8px;
+      border-radius: 6px;
+      object-fit: cover;
       border: 1px solid #555;
       cursor: pointer;
-      object-fit: contain;
     }
-    .message .actions {
+    .actions {
       position: absolute;
-      top: 2px;
-      right: 5px;
+      top: 8px;
+      right: 10px;
       display: flex;
       gap: 8px;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.2s;
     }
-    .message:hover .actions {
-      opacity: 1;
-    }
-    .message .action-btn {
+    .message:hover .actions { opacity: 1; pointer-events: auto; }
+    .action-btn {
       background: transparent;
       border: none;
-      color: #999;
-      font-size: 14px;
+      color: #b9bbbe;
+      font-size: 15px;
       cursor: pointer;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border-radius: 4px;
-      transition: background-color 0.2s ease;
+      transition: background 0.2s, color 0.2s;
     }
-    .message .action-btn:hover {
-      background-color: #5b6eae;
-      color: white;
-    }
+    .action-btn:hover { background: #5865f2; color: #fff; }
     .chat-input {
       display: flex;
-      gap: 8px;
-      padding: 14px 20px;
-      background-color: #40444b;
+      gap: 10px;
+      padding: 17px 34px;
+      background: #40444b;
       align-items: center;
+      border-top: 1px solid #2f3136;
     }
     .chat-input input[type='text'] {
-      flex-grow: 1;
-      padding: 14px;
+      flex: 1;
+      height: 45px;
+      padding: 0 15px;
       border-radius: 5px;
-      background-color: #2f3136;
+      background: #2f3136;
       border: none;
       font-size: 15px;
       color: #fff;
       outline: none;
     }
-    .chat-input input[type='file'] {
-      display: none;
-    }
     .chat-input label {
       cursor: pointer;
-      font-size: 22px;
+      font-size: 23px;
       color: #7289da;
-      padding: 6px 10px;
+      padding: 4px 8px;
       user-select: none;
       border-radius: 6px;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s;
     }
-    .chat-input label:hover {
-      background-color: #5b6eae;
-    }
+    .chat-input label:hover { background: #5865f2; }
     .chat-input button {
-      background-color: #7289da;
+      background: #5865f2;
       border: none;
-      border-radius: 5px;
-      padding: 12px 22px;
-      color: white;
+      border-radius: 6px;
+      color: #fff;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 17px;
+      padding: 10px 22px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s;
     }
-    .chat-input button:hover {
-      background-color: #5b6eae;
-    }
+    .chat-input button:hover { background: #7289da; }
+    .chat-input input[type='file'] { display: none; }
   </style>
 </head>
 <body>
@@ -264,254 +280,244 @@
   </div>
   <div class="main">
     <div class="chat-header">
-      <img id="group-avatar" alt="Ícone do grupo" class="group-avatar" title="Clique para mudar imagem do grupo" src="https://placehold.co/48x48" />
-      <input type="file" id="group-avatar-input" accept="image/*" style="display:none" onchange="changeGroupAvatar(event)" />
+      <img id="group-avatar" src="https://placehold.co/48x48" alt="Ícone do grupo" class="group-avatar" title="Clique para mudar a imagem do grupo" />
+      <input type="file" id="group-avatar-input" style="display:none" accept="image/*" />
       <span id="chat-header-text"># geral</span>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input">
-      <input type="text" id="chat-input" placeholder="Digite uma mensagem..." onkeydown="handleKeyDown(event)" />
+      <input type="text" id="chat-input" placeholder="Digite uma mensagem..." onkeydown="handleKeyDown(event)" autofocus />
       <label for="chat-image-upload" title="Enviar imagem" aria-label="Enviar imagem">📷</label>
       <input type="file" id="chat-image-upload" accept="image/*" onchange="sendImage(event)" />
       <button onclick="sendMessage()">Enviar</button>
     </div>
   </div>
+<script>
+const username = localStorage.getItem('chat-username') || 'Usuário';
+const avatar = localStorage.getItem('chat-avatar') || 'https://placehold.co/40x40';
 
-  <script>
-    const username = localStorage.getItem('chat-username') || 'Usuário';
-    const avatar = localStorage.getItem('chat-avatar') || 'https://placehold.co/40x40';
+const channelsList = document.getElementById('channels-list');
+const chatHeaderText = document.getElementById('chat-header-text');
+const groupAvatar = document.getElementById('group-avatar');
+const groupAvatarInput = document.getElementById('group-avatar-input');
+const chatMessages = document.getElementById('chat-messages');
+const chatInput = document.getElementById('chat-input');
 
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const channelsList = document.getElementById('channels-list');
-    const chatHeaderText = document.getElementById('chat-header-text');
-    const groupAvatar = document.getElementById('group-avatar');
-    const groupAvatarInput = document.getElementById('group-avatar-input');
+let currentChannel = 'geral';
+const groupsAvatar = { 'geral': 'https://placehold.co/48x48' };
+const channels = { 'geral': [] };
 
-    let currentChannel = 'geral';
-    const groupsAvatar = {'geral': 'https://placehold.co/48x48'};
-    const channels = {'geral': []};
+// Abrir input ao clicar na imagem
+groupAvatar.onclick = () => groupAvatarInput.click();
+groupAvatarInput.onchange = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    groupAvatar.src = e.target.result;
+    groupsAvatar[currentChannel] = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
 
-    function createMessageElement(msg, index) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = 'message ' + (msg.user === username ? 'self' : '');
+function createMessageElement(msg, index) {
+  const div = document.createElement('div');
+  div.className = 'message' + (msg.user === username ? ' self' : '');
 
-      const avatarImg = document.createElement('img');
-      avatarImg.className = 'avatar';
-      avatarImg.src = msg.avatarUrl;
+  const avatarImg = document.createElement('img');
+  avatarImg.className = 'avatar';
+  avatarImg.src = msg.avatarUrl;
 
-      const contentWrapper = document.createElement('div');
-      contentWrapper.className = 'content-wrapper';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'content-wrapper';
 
-      const usernameTimestampDiv = document.createElement('div');
-      usernameTimestampDiv.className = 'username-timestamp';
+  const userTs = document.createElement('div');
+  userTs.className = 'username-timestamp';
+  const uname = document.createElement('span');
+  uname.className = 'username';
+  uname.textContent = msg.user;
+  const time = document.createElement('span');
+  time.className = 'timestamp';
+  time.textContent = new Date(msg.timestamp).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  userTs.appendChild(uname);
+  userTs.appendChild(time);
 
-      const usernameSpan = document.createElement('span');
-      usernameSpan.className = 'username';
-      usernameSpan.textContent = msg.user;
+  if(msg.edited) {
+    const edit = document.createElement('span');
+    edit.className = 'edited-indicator';
+    edit.textContent = '(editado)';
+    userTs.appendChild(edit);
+  }
 
-      const timestampSpan = document.createElement('span');
-      timestampSpan.className = 'timestamp';
-      timestampSpan.textContent = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  const content = document.createElement('div');
+  content.className = 'content';
+  content.dataset.index = index;
+  if (msg.type === 'text') {
+    content.innerHTML = msg.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+  } else if (msg.type === 'image') {
+    const img = document.createElement('img');
+    img.src = msg.text;
+    img.className = 'message-img';
+    content.appendChild(img);
+  }
 
-      usernameTimestampDiv.appendChild(usernameSpan);
-      usernameTimestampDiv.appendChild(timestampSpan);
+  // Editar e apagar para o usuário
+  if(msg.user === username) {
+    const actions = document.createElement('div');
+    actions.className = 'actions';
 
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'content';
-      contentDiv.dataset.index = index;
-      contentDiv.tabIndex = 0;
-      contentDiv.ariaLabel = 'Mensagem de ' + msg.user;
+    const editBtn = document.createElement('button');
+    editBtn.className = 'action-btn';
+    editBtn.title = 'Editar';
+    editBtn.innerHTML = '✏️';
+    editBtn.onclick = (e) => {
+      e.preventDefault(); e.stopPropagation();
+      startEditingMessage(content, index);
+    };
 
-      // Handle text or image
-      if (msg.type === 'text') {
-        const linkedText = msg.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#7289da;">$1</a>');
-        contentDiv.innerHTML = linkedText;
-      } else if (msg.type === 'image') {
-        const img = document.createElement('img');
-        img.src = msg.text;
-        img.className = 'message-img';
-        contentDiv.appendChild(img);
-      }
+    const delBtn = document.createElement('button');
+    delBtn.className = 'action-btn';
+    delBtn.title = 'Apagar';
+    delBtn.innerHTML = '🗑️';
+    delBtn.onclick = (e) => { e.preventDefault(); deleteMessage(index); };
 
-      // Edited indicator
-      if (msg.edited) {
-        const editedSpan = document.createElement('span');
-        editedSpan.className = 'edited-indicator';
-        editedSpan.textContent = '(editado)';
-        usernameTimestampDiv.appendChild(editedSpan);
-      }
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+    content.appendChild(actions);
+  }
 
-      // Actions (edit, delete, react)
-      if (msg.user === username) {
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'actions';
+  wrapper.appendChild(userTs);
+  wrapper.appendChild(content);
 
-        const editBtn = document.createElement('button');
-        editBtn.className = 'action-btn';
-        editBtn.innerHTML = '✏️';
-        editBtn.title = 'Editar mensagem';
-        editBtn.onclick = (e) => {
-          e.stopPropagation();
-          startEditingMessage(contentDiv, index);
-        };
+  if(msg.user === username) {
+    div.appendChild(wrapper);
+    div.appendChild(avatarImg);
+  } else {
+    div.appendChild(avatarImg);
+    div.appendChild(wrapper);
+  }
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'action-btn';
-        deleteBtn.innerHTML = '🗑️';
-        deleteBtn.title = 'Apagar mensagem';
-        deleteBtn.onclick = (e) => {
-          e.stopPropagation();
-          deleteMessage(index);
-        };
+  return div;
+}
 
-        actionsDiv.appendChild(editBtn);
-        actionsDiv.appendChild(deleteBtn);
-        messageDiv.appendChild(actionsDiv);
-      }
+function renderMessages(channel) {
+  chatMessages.innerHTML = '';
+  channels[channel].forEach((msg, idx) => {
+    chatMessages.appendChild(createMessageElement(msg, idx));
+  });
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-      contentWrapper.appendChild(usernameTimestampDiv);
-      contentWrapper.appendChild(contentDiv);
+function addMessage(channel, user, avatarUrl, text, type='text', edited=false) {
+  channels[channel].push({ user, avatarUrl, text, type, edited, timestamp: Date.now() });
+  if(channel === currentChannel) renderMessages(channel);
+}
 
-      if (msg.user === username) {
-        messageDiv.appendChild(contentWrapper);
-        messageDiv.appendChild(avatarImg);
-      } else {
-        messageDiv.appendChild(avatarImg);
-        messageDiv.appendChild(contentWrapper);
-      }
-      return messageDiv;
-    }
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if(text === '') return;
+  addMessage(currentChannel, username, avatar, text, 'text');
+  chatInput.value = '';
+  chatInput.focus();
+}
 
-    function renderMessages(channel) {
-      chatMessages.innerHTML = '';
-      channels[channel].forEach((msg, idx) => {
-        chatMessages.appendChild(createMessageElement(msg, idx));
-      });
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+function sendImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    addMessage(currentChannel, username, avatar, e.target.result, 'image');
+    event.target.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+document.getElementById('chat-image-upload').onchange = sendImage;
 
-    function addMessage(channel, user, avatarUrl, text, type='text', edited=false) {
-      channels[channel].push({user, avatarUrl, text, type, edited, timestamp: Date.now()});
-      if (channel === currentChannel) renderMessages(channel);
-    }
+function deleteMessage(idx) {
+  channels[currentChannel].splice(idx, 1);
+  renderMessages(currentChannel);
+}
 
-    function sendMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-      addMessage(currentChannel, username, avatar, text, 'text');
-      chatInput.value = '';
-      chatInput.focus();
-    }
-
-    function sendImage(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        addMessage(currentChannel, username, avatar, e.target.result, 'image');
-        event.target.value = '';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function deleteMessage(index) {
-      channels[currentChannel].splice(index, 1);
+function startEditingMessage(contentDiv, index) {
+  if(contentDiv.isContentEditable) return;
+  contentDiv.contentEditable = true;
+  contentDiv.classList.add('editing');
+  contentDiv.focus();
+  const finishEdit = () => {
+    contentDiv.contentEditable = false;
+    contentDiv.classList.remove('editing');
+    const newText = contentDiv.textContent.trim();
+    if(newText && newText !== channels[currentChannel][index].text) {
+      channels[currentChannel][index].text = newText;
+      channels[currentChannel][index].edited = true;
+      renderMessages(currentChannel);
+    } else {
       renderMessages(currentChannel);
     }
-
-    function startEditingMessage(contentDiv, index) {
-      if (contentDiv.isContentEditable) return;
-      contentDiv.contentEditable = true;
-      contentDiv.classList.add('editing');
-      contentDiv.focus();
-
-      const finishEdit = () => {
-        contentDiv.contentEditable = false;
-        contentDiv.classList.remove('editing');
-        const newText = contentDiv.textContent.trim();
-        if (newText && newText !== channels[currentChannel][index].text) {
-          channels[currentChannel][index].text = newText;
-          channels[currentChannel][index].edited = true;
-          renderMessages(currentChannel);
-        } else {
-          renderMessages(currentChannel);
-        }
-        contentDiv.removeEventListener('blur', finishEdit);
-        contentDiv.removeEventListener('keydown', finishEditKey);
-      };
-
-      const finishEditKey = (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          finishEdit();
-        }
-      };
-
-      contentDiv.addEventListener('blur', finishEdit);
-      contentDiv.addEventListener('keydown', finishEditKey);
+    contentDiv.removeEventListener('blur', finishEdit);
+    contentDiv.removeEventListener('keydown', finishEditKey);
+  };
+  const finishEditKey = (e) => {
+    if(e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      finishEdit();
     }
+  };
+  contentDiv.addEventListener('blur', finishEdit);
+  contentDiv.addEventListener('keydown', finishEditKey);
+}
 
-    function selectChannel(channel) {
-      currentChannel = channel;
-      Array.from(channelsList.children).forEach(c => {
-        c.classList.toggle('active', c.textContent.trim() === '# ' + channel);
-      });
-      chatHeaderText.textContent = '# ' + channel;
-      groupAvatar.src = groupsAvatar[channel] || 'https://placehold.co/48x48';
-      renderMessages(channel);
-    }
+function selectChannel(channel) {
+  currentChannel = channel;
+  Array.from(channelsList.children).forEach(c => {
+    c.classList.toggle('active', c.textContent.trim() === '# ' + channel);
+  });
+  chatHeaderText.textContent = '# ' + channel;
+  groupAvatar.src = groupsAvatar[channel] || 'https://placehold.co/48x48';
+  renderMessages(channel);
+}
 
-    function createChannel() {
-      let newChannel = prompt('Nome do novo canal:');
-      newChannel = newChannel ? newChannel.trim().toLowerCase().replace(/\s+/g,'-') : '';
-      if (newChannel && !channels[newChannel]) {
-        channels[newChannel] = [];
-        groupsAvatar[newChannel] = 'https://placehold.co/48x48';
-        const channelDiv = document.createElement('div');
-        channelDiv.className = 'channel';
-        channelDiv.textContent = '# ' + newChannel;
-        channelDiv.onclick = () => selectChannel(newChannel);
-        channelsList.appendChild(channelDiv);
-        selectChannel(newChannel);
-      }
-    }
+function createChannel() {
+  let newChannel = prompt('Nome do novo canal:');
+  if(!newChannel) return;
+  newChannel = newChannel.trim().toLowerCase().replace(/\s+/g,'-');
+  if (newChannel && !channels[newChannel]) {
+    channels[newChannel] = [];
+    groupsAvatar[newChannel] = 'https://placehold.co/48x48';
+    const channelDiv = document.createElement('div');
+    channelDiv.className = 'channel';
+    channelDiv.textContent = '# ' + newChannel;
+    channelDiv.onclick = () => selectChannel(newChannel);
+    channelsList.appendChild(channelDiv);
+    selectChannel(newChannel);
+  }
+}
 
-    function shareLink() {
-      const url = window.location.href.split('?')[0] + '?channel=' + encodeURIComponent(currentChannel);
-      navigator.clipboard.writeText(url).then(() => {
-        alert('Link copiado para a área de transferência:\n' + url);
-      }).catch(() => {
-        alert('Copie manualmente:\n' + url);
-      });
-    }
+function shareLink() {
+  const url = window.location.href.split('?')[0] + '?channel=' + encodeURIComponent(currentChannel);
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Link copiado para a área de transferência:\n' + url);
+  }).catch(() => {
+    alert('Copie manualmente:\n' + url);
+  });
+}
 
-    function changeGroupAvatar(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        groupAvatar.src = e.target.result;
-        groupsAvatar[currentChannel] = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+// Enter envia, Shift+Enter nova linha
+function handleKeyDown(event) {
+  if(event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+}
 
-    function handleKeyDown(event) {
-      if(event.key === 'Enter' && !event.shiftKey){
-        event.preventDefault();
-        sendMessage();
-      }
-    }
-
-    // Inicializa o canal atual
-    const params = new URLSearchParams(window.location.search);
-    const channelParam = params.get('channel');
-    if(channelParam && channels[channelParam]){
-      selectChannel(channelParam);
-    } else {
-      selectChannel('geral');
-    }
-  </script>
+// Inicializa canal a partir da URL
+const params = new URLSearchParams(window.location.search);
+const channelParam = params.get('channel');
+if(channelParam && channels[channelParam]){
+  selectChannel(channelParam);
+} else {
+  selectChannel('geral');
+}
+</script>
 </body>
 </html>
