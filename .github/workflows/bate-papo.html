@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat Estilo Discord Aperfeiçoado</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      background: #181823;
+      font-family: 'Roboto', sans-serif;
+      color: #dcdde1;
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 260px;
+      background-color: #2f3136;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #202225;
+      padding: 10px;
+    }
+    .sidebar-header {
+      font-size: 1.5em;
+      color: #7289da;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .channels {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .channel {
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-weight: 500;
+      color: #b9bbbe;
+      cursor: pointer;
+      margin-bottom: 6px;
+      user-select: none;
+      transition: background-color 0.15s ease;
+    }
+    .channel:hover, .channel.active {
+      background-color: #40444b;
+      color: white;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      user-select: none;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-weight: 700;
+      font-size: 1em;
+      color: white;
+      background-color: #7289da;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #5b6eae;
+    }
+    .main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #36393f;
+    }
+    .chat-header {
+      padding: 20px 24px;
+      background-color: #2f3136;
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #202225;
+    }
+    .group-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #7289da;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+    .message {
+      display: flex;
+    }
+    .message.self {
+      justify-content: flex-end;
+    }
+    .message .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      max-width: 65%;
+      position: relative;
+    }
+    .message .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #7289da;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .message.self .avatar {
+      order: 2;
+      margin-left: 12px;
+    }
+    .message .content {
+      background: #40444b;
+      color: #dcddde;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      cursor: pointer;
+      user-select: text;
+      position: relative;
+    }
+    .message.self .content {
+      background: #7289da;
+      color: #fff;
+    }
+    .message .username-timestamp {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 3px;
+      color: #999;
+    }
+    .message .username-timestamp .username {
+      font-weight: 700;
+      color: #7289da;
+    }
+    .message .username-timestamp .timestamp {
+      font-weight: 400;
+    }
+    .message .edited-indicator {
+      font-size: 10px;
+      color: #aaa;
+      margin-left: 6px;
+      font-style: italic;
+    }
+    .message img.message-img {
+      margin-top: 8px;
+      max-width: 220px;
+      max-height: 150px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      cursor: pointer;
+      object-fit: contain;
+    }
+    .message .actions {
+      position: absolute;
+      top: 2px;
+      right: 5px;
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .message:hover .actions {
+      opacity: 1;
+    }
+    .message .action-btn {
+      background: transparent;
+      border: none;
+      color: #999;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+    .message .action-btn:hover {
+      background-color: #5b6eae;
+      color: white;
+    }
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      padding: 14px 20px;
+      background-color: #40444b;
+      align-items: center;
+    }
+    .chat-input input[type='text'] {
+      flex-grow: 1;
+      padding: 14px;
+      border-radius: 5px;
+      background-color: #2f3136;
+      border: none;
+      font-size: 15px;
+      color: #fff;
+      outline: none;
+    }
+    .chat-input input[type='file'] {
+      display: none;
+    }
+    .chat-input label {
+      cursor: pointer;
+      font-size: 22px;
+      color: #7289da;
+      padding: 6px 10px;
+      user-select: none;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+    .chat-input label:hover {
+      background-color: #5b6eae;
+    }
+    .chat-input button {
+      background-color: #7289da;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 22px;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .chat-input button:hover {
+      background-color: #5b6eae;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      Canais
+      <div class="btn-group">
+        <button onclick="createChannel()">+</button>
+        <button onclick="shareLink()">🔗</button>
+      </div>
+    </div>
+    <div class="channels" id="channels-list">
+      <div class="channel active" onclick="selectChannel('geral')"># geral</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="chat-header">
+      <img id="group-avatar" alt="Ícone do grupo" class="group-avatar" title="Clique para mudar imagem do grupo" src="https://placehold.co/48x48" />
+      <input type="file" id="group-avatar-input" accept="image/*" style="display:none" onchange="changeGroupAvatar(event)" />
+      <span id="chat-header-text"># geral</span>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Digite uma mensagem..." onkeydown="handleKeyDown(event)" />
+      <label for="chat-image-upload" title="Enviar imagem" aria-label="Enviar imagem">📷</label>
+      <input type="file" id="chat-image-upload" accept="image/*" onchange="sendImage(event)" />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    const username = localStorage.getItem('chat-username') || 'Usuário';
+    const avatar = localStorage.getItem('chat-avatar') || 'https://placehold.co/40x40';
+
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const channelsList = document.getElementById('channels-list');
+    const chatHeaderText = document.getElementById('chat-header-text');
+    const groupAvatar = document.getElementById('group-avatar');
+    const groupAvatarInput = document.getElementById('group-avatar-input');
+
+    let currentChannel = 'geral';
+    const groupsAvatar = {'geral': 'https://placehold.co/48x48'};
+    const channels = {'geral': []};
+
+    function createMessageElement(msg, index) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message ' + (msg.user === username ? 'self' : '');
+
+      const avatarImg = document.createElement('img');
+      avatarImg.className = 'avatar';
+      avatarImg.src = msg.avatarUrl;
+
+      const contentWrapper = document.createElement('div');
+      contentWrapper.className = 'content-wrapper';
+
+      const usernameTimestampDiv = document.createElement('div');
+      usernameTimestampDiv.className = 'username-timestamp';
+
+      const usernameSpan = document.createElement('span');
+      usernameSpan.className = 'username';
+      usernameSpan.textContent = msg.user;
+
+      const timestampSpan = document.createElement('span');
+      timestampSpan.className = 'timestamp';
+      timestampSpan.textContent = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+      usernameTimestampDiv.appendChild(usernameSpan);
+      usernameTimestampDiv.appendChild(timestampSpan);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'content';
+      contentDiv.dataset.index = index;
+      contentDiv.tabIndex = 0;
+      contentDiv.ariaLabel = 'Mensagem de ' + msg.user;
+
+      // Handle text or image
+      if (msg.type === 'text') {
+        const linkedText = msg.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#7289da;">$1</a>');
+        contentDiv.innerHTML = linkedText;
+      } else if (msg.type === 'image') {
+        const img = document.createElement('img');
+        img.src = msg.text;
+        img.className = 'message-img';
+        contentDiv.appendChild(img);
+      }
+
+      // Edited indicator
+      if (msg.edited) {
+        const editedSpan = document.createElement('span');
+        editedSpan.className = 'edited-indicator';
+        editedSpan.textContent = '(editado)';
+        usernameTimestampDiv.appendChild(editedSpan);
+      }
+
+      // Actions (edit, delete, react)
+      if (msg.user === username) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'action-btn';
+        editBtn.innerHTML = '✏️';
+        editBtn.title = 'Editar mensagem';
+        editBtn.onclick = (e) => {
+          e.stopPropagation();
+          startEditingMessage(contentDiv, index);
+        };
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'action-btn';
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.title = 'Apagar mensagem';
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteMessage(index);
+        };
+
+        actionsDiv.appendChild(editBtn);
+        actionsDiv.appendChild(deleteBtn);
+        messageDiv.appendChild(actionsDiv);
+      }
+
+      contentWrapper.appendChild(usernameTimestampDiv);
+      contentWrapper.appendChild(contentDiv);
+
+      if (msg.user === username) {
+        messageDiv.appendChild(contentWrapper);
+        messageDiv.appendChild(avatarImg);
+      } else {
+        messageDiv.appendChild(avatarImg);
+        messageDiv.appendChild(contentWrapper);
+      }
+      return messageDiv;
+    }
+
+    function renderMessages(channel) {
+      chatMessages.innerHTML = '';
+      channels[channel].forEach((msg, idx) => {
+        chatMessages.appendChild(createMessageElement(msg, idx));
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addMessage(channel, user, avatarUrl, text, type='text', edited=false) {
+      channels[channel].push({user, avatarUrl, text, type, edited, timestamp: Date.now()});
+      if (channel === currentChannel) renderMessages(channel);
+    }
+
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addMessage(currentChannel, username, avatar, text, 'text');
+      chatInput.value = '';
+      chatInput.focus();
+    }
+
+    function sendImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        addMessage(currentChannel, username, avatar, e.target.result, 'image');
+        event.target.value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function deleteMessage(index) {
+      channels[currentChannel].splice(index, 1);
+      renderMessages(currentChannel);
+    }
+
+    function startEditingMessage(contentDiv, index) {
+      if (contentDiv.isContentEditable) return;
+      contentDiv.contentEditable = true;
+      contentDiv.classList.add('editing');
+      contentDiv.focus();
+
+      const finishEdit = () => {
+        contentDiv.contentEditable = false;
+        contentDiv.classList.remove('editing');
+        const newText = contentDiv.textContent.trim();
+        if (newText && newText !== channels[currentChannel][index].text) {
+          channels[currentChannel][index].text = newText;
+          channels[currentChannel][index].edited = true;
+          renderMessages(currentChannel);
+        } else {
+          renderMessages(currentChannel);
+        }
+        contentDiv.removeEventListener('blur', finishEdit);
+        contentDiv.removeEventListener('keydown', finishEditKey);
+      };
+
+      const finishEditKey = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          finishEdit();
+        }
+      };
+
+      contentDiv.addEventListener('blur', finishEdit);
+      contentDiv.addEventListener('keydown', finishEditKey);
+    }
+
+    function selectChannel(channel) {
+      currentChannel = channel;
+      Array.from(channelsList.children).forEach(c => {
+        c.classList.toggle('active', c.textContent.trim() === '# ' + channel);
+      });
+      chatHeaderText.textContent = '# ' + channel;
+      groupAvatar.src = groupsAvatar[channel] || 'https://placehold.co/48x48';
+      renderMessages(channel);
+    }
+
+    function createChannel() {
+      let newChannel = prompt('Nome do novo canal:');
+      newChannel = newChannel ? newChannel.trim().toLowerCase().replace(/\s+/g,'-') : '';
+      if (newChannel && !channels[newChannel]) {
+        channels[newChannel] = [];
+        groupsAvatar[newChannel] = 'https://placehold.co/48x48';
+        const channelDiv = document.createElement('div');
+        channelDiv.className = 'channel';
+        channelDiv.textContent = '# ' + newChannel;
+        channelDiv.onclick = () => selectChannel(newChannel);
+        channelsList.appendChild(channelDiv);
+        selectChannel(newChannel);
+      }
+    }
+
+    function shareLink() {
+      const url = window.location.href.split('?')[0] + '?channel=' + encodeURIComponent(currentChannel);
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Link copiado para a área de transferência:\n' + url);
+      }).catch(() => {
+        alert('Copie manualmente:\n' + url);
+      });
+    }
+
+    function changeGroupAvatar(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        groupAvatar.src = e.target.result;
+        groupsAvatar[currentChannel] = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleKeyDown(event) {
+      if(event.key === 'Enter' && !event.shiftKey){
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    // Inicializa o canal atual
+    const params = new URLSearchParams(window.location.search);
+    const channelParam = params.get('channel');
+    if(channelParam && channels[channelParam]){
+      selectChannel(channelParam);
+    } else {
+      selectChannel('geral');
+    }
+  </script>
+</body>
+</html>
